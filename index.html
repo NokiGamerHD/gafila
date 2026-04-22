@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Projeto Hackathon: GaFila — Sua vez, sem fila.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="splash-screen" class="splash-screen">
+  <div class="splash-logo">
+    <div class="splash-icon">
+      <img src="/assets/images/clean-logo.png " alt="GaFila">
+    </div>
+    <h1 class="splash-title">GaFila</h1>
+    <p class="splash-slogan">Sua vez, sem fila.</p>
+  </div>
+  <div class="splash-loader">
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+  </div>
+</div>
+<div id="page-login" class="page hidden">
+  <div class="login-bg">
+    <div class="login-blob blob1"></div>
+    <div class="login-blob blob2"></div>
+    <div class="login-blob blob3"></div>
+  </div>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-logo-wrap">
+        <div class="login-logo-icon">
+         <img src="/assets/images/cat-logo.png" alt="Gato-Login">
+        </div>
+        <span class="login-brand">GaFila</span>
+      </div>
+      <p class="login-tagline">Sua vez, sem fila.</p>
+    </div>
+    <div class="login-card" id="login-card-main">
+      <h2 class="login-card-title">Bem-vindo" 👋</h2>
+      <p class="login-card-sub">Como deseja entrar?</p>
+
+      <div class="login-btn-grid">
+        <button class="btn-login-option btn-aluno" onclick="showLoginForm('aluno', 'login')">
+          <span class="btn-icon">🎓</span>
+          <span class="btn-label">Entrar<br><small>Aluno</small></span>
+        </button>
+        <button class="btn-login-option btn-func" onclick="showLoginForm('funcionario', 'login')">
+          <span class="btn-icon">👨‍🍳</span>
+          <span class="btn-label">Entrar<br><small>Funcionário</small></span>
+        </button>
+        <button class="btn-login-option btn-reg-aluno" onclick="showLoginForm('aluno', 'register')">
+          <span class="btn-icon">✏️</span>
+          <span class="btn-label">Registrar<br><small>Aluno</small></span>
+        </button>
+        <button class="btn-login-option btn-reg-func" onclick="showLoginForm('funcionario', 'register')">
+          <span class="btn-icon">📝</span>
+          <span class="btn-label">Registrar<br><small>Funcionário</small></span>
+        </button>
+      </div>
+      <div class="login-divider"><span>ou</span></div>
+      <button class="btn-guest" onclick="loginAnonymous()">
+        <span>👤</span> Entrar sem login
+      </button>
+    </div>
+
+    <div class="login-card hidden" id="login-card-aluno">
+      <button class="btn-back" onclick="showMainLogin()">← Voltar</button>
+      <h2 class="login-card-title" id="form-aluno-title">Login — Aluno</h2>
+
+      <div class="form-group">
+        <label class="form-label">Nome completo</label>
+        <input type="text" id="aluno-nome" class="form-input" placeholder="Seu nome" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">RM (Registro do Aluno)</label>
+        <input type="text" id="aluno-rm" class="form-input" placeholder="Ex: 123456" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input type="password" id="aluno-senha" class="form-input" placeholder="••••••••" />
+      </div>
+      <p class="form-error hidden" id="aluno-error"></p>
+      <button class="btn-primary" id="btn-aluno-submit" onclick="submitAluno()">Entrar</button>
+    </div>
+
+    <div class="login-card hidden" id="login-card-func">
+      <button class="btn-back" onclick="showMainLogin()">← Voltar</button>
+      <h2 class="login-card-title" id="form-func-title">Login — Funcionário</h2>
+
+      <div class="form-group">
+        <label class="form-label">Nome completo</label>
+        <input type="text" id="func-nome" class="form-input" placeholder="Seu nome" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">CPF / RG</label>
+        <input type="text" id="func-doc" class="form-input" placeholder="Ex: 000.000.000-00" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input type="password" id="func-senha" class="form-input" placeholder="••••••••" />
+      </div>
+      <p class="form-error hidden" id="func-error"></p>
+      <button class="btn-primary" id="btn-func-submit" onclick="submitFunc()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="page-aluno" class="page hidden">
+
+  <div id="tab-aluno-inicio" class="tab-content">
+    <div class="page-header header-aluno">
+      <div class="header-brand">
+        <span class="header-brand-name">GaFila</span>
+        <span class="header-tagline">Sua vez, sem fila.</span>
+      </div>
+      <div class="header-avatar" onclick="switchTab('aluno','perfil')">
+        <span id="aluno-avatar-initial">?</span>
+      </div>
+    </div>
+
+    <div class="tab-body">
+      <div class="welcome-banner">
+        <p class="welcome-text">Bem-vindo,</p>
+        <h2 class="welcome-name" id="aluno-welcome-name">Visitante</h2>
+      </div>
+
+      <div class="queue-status-card" id="aluno-queue-card">
+        <div class="queue-status-icon" id="aluno-queue-icon">🕐</div>
+        <p class="queue-status-text" id="aluno-queue-text">Entre na fila para iniciar a contagem</p>
+        <div class="queue-number-badge hidden" id="aluno-queue-badge">
+          <span class="queue-number-label">Sua senha</span>
+          <span class="queue-number-value" id="aluno-queue-num">—</span>
+        </div>
+        <div class="queue-position-wrap hidden" id="aluno-queue-pos-wrap">
+          <span class="queue-pos-label">Posição na fila</span>
+          <span class="queue-pos-value" id="aluno-queue-pos">—</span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-action btn-enter-queue" id="btn-enter-queue" onclick="entrarFila('principal')">
+          <span class="btn-action-icon">🚀</span>
+          <span>Entrar na fila</span>
+        </button>
+        <button class="btn-action btn-repet hidden" id="btn-enter-repet" onclick="entrarFila('repeticao')">
+          <span class="btn-action-icon">🔁</span>
+          <span>Entrar na fila de repetição</span>
+        </button>
+        <button class="btn-action btn-about" onclick="openPopup('popup-about')">
+          <span class="btn-action-icon">💡</span>
+          <span>Sobre a equipe</span>
+        </button>
+      </div>
+
+      <div class="current-call-card" id="aluno-current-call">
+        <span class="current-call-label">Chamando agora</span>
+        <span class="current-call-number" id="aluno-current-num">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-aluno-fila" class="tab-content hidden">
+    <div class="page-header header-aluno">
+      <h2 class="page-header-title">Fila Atual</h2>
+    </div>
+    <div class="tab-body">
+      <div class="queue-tabs">
+        <button class="queue-tab-btn active" onclick="switchQueueView('principal')" id="qtab-principal">Principal</button>
+        <button class="queue-tab-btn" onclick="switchQueueView('repeticao')" id="qtab-repeticao">Repetição</button>
+      </div>
+
+      <div class="queue-list-wrap" id="aluno-queue-list-principal">
+        <p class="queue-empty-msg" id="ql-principal-empty">A fila está vazia 🎉</p>
+        <div class="queue-list" id="ql-principal"></div>
+      </div>
+      <div class="queue-list-wrap hidden" id="aluno-queue-list-repeticao">
+        <p class="queue-empty-msg" id="ql-repeticao-empty">Nenhum pedido de repetição 🎉</p>
+        <div class="queue-list" id="ql-repeticao"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-aluno-perfil" class="tab-content hidden">
+    <div class="page-header header-aluno">
+      <h2 class="page-header-title">Meu Perfil</h2>
+    </div>
+    <div class="tab-body">
+      <div class="profile-card">
+        <div class="profile-avatar-big" id="aluno-avatar-big">?</div>
+        <h3 class="profile-name" id="aluno-profile-name">—</h3>
+        <p class="profile-sub" id="aluno-profile-rm">RM: —</p>
+        <span class="profile-badge">Aluno</span>
+      </div>
+
+      <div class="profile-menu">
+        <button class="profile-menu-item" onclick="openPopup('popup-change-pass')">
+          <span>🔒</span> Alterar senha
+          <span class="menu-arrow">›</span>
+        </button>
+        <button class="profile-menu-item danger" onclick="doLogout()">
+          <span>🚪</span> Sair da conta
+          <span class="menu-arrow">›</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" id="nav-aluno">
+    <button class="nav-btn active" data-tab="inicio" onclick="switchTab('aluno','inicio')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </button>
+    <button class="nav-btn" data-tab="fila" onclick="switchTab('aluno','fila')">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">Fila</span>
+    </button>
+    <button class="nav-btn" data-tab="perfil" onclick="switchTab('aluno','perfil')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </button>
+  </nav>
+</div>
+
+<div id="page-func" class="page hidden">
+
+  <div id="tab-func-inicio" class="tab-content">
+    <div class="page-header header-func">
+      <div class="header-brand">
+        <span class="header-brand-name">GaFila</span>
+        <span class="header-role-badge">Funcionário</span>
+      </div>
+      <div class="header-avatar func-avatar" onclick="switchTab('func','perfil')">
+        <span id="func-avatar-initial">F</span>
+      </div>
+    </div>
+
+    <div class="tab-body">
+      <div class="welcome-banner">
+        <p class="welcome-text">Olá,</p>
+        <h2 class="welcome-name" id="func-welcome-name">Funcionário</h2>
+      </div>
+
+      <div class="func-call-panel" id="func-call-panel">
+        <div class="func-call-empty" id="func-call-empty">
+          <span class="empty-icon">🎉</span>
+          <p>A fila está vazia</p>
+        </div>
+        <div class="func-call-active hidden" id="func-call-active">
+          <span class="call-label">Atendendo</span>
+          <div class="call-number-display" id="func-current-num">—</div>
+          <span class="call-type-tag" id="func-call-type">Principal</span>
+        </div>
+      </div>
+
+      <button class="btn-call-next" id="btn-call-next" onclick="chamarProximo()">
+        <span class="btn-call-icon">📣</span>
+        <span>Chamar próximo</span>
+      </button>
+
+      <div class="func-stats">
+        <div class="stat-card">
+          <span class="stat-icon">👥</span>
+          <span class="stat-num" id="stat-principal-count">0</span>
+          <span class="stat-label">Na fila</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🔁</span>
+          <span class="stat-num" id="stat-repet-count">0</span>
+          <span class="stat-label">Repetição</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">✅</span>
+          <span class="stat-num" id="stat-atendidos">0</span>
+          <span class="stat-label">Atendidos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-func-fila" class="tab-content hidden">
+    <div class="page-header header-func">
+      <h2 class="page-header-title">Gerenciar Fila</h2>
+    </div>
+    <div class="tab-body">
+      <div class="queue-tabs">
+        <button class="queue-tab-btn active" onclick="switchFuncQueueView('principal')" id="fqtab-principal">Principal</button>
+        <button class="queue-tab-btn" onclick="switchFuncQueueView('repeticao')" id="fqtab-repeticao">Repetição</button>
+      </div>
+      <div class="queue-total-badge" id="func-queue-total">Total: 0 alunos</div>
+
+      <div class="queue-list-wrap" id="func-queue-list-principal">
+        <p class="queue-empty-msg" id="fql-principal-empty">Fila principal vazia 🎉</p>
+        <div class="queue-list" id="fql-principal"></div>
+      </div>
+      <div class="queue-list-wrap hidden" id="func-queue-list-repeticao">
+        <p class="queue-empty-msg" id="fql-repeticao-empty">Fila de repetição vazia 🎉</p>
+        <div class="queue-list" id="fql-repeticao"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-func-perfil" class="tab-content hidden">
+    <div class="page-header header-func">
+      <h2 class="page-header-title">Meu Perfil</h2>
+    </div>
+    <div class="tab-body">
+      <div class="profile-card">
+        <div class="profile-avatar-big func-avatar-big" id="func-avatar-big">F</div>
+        <h3 class="profile-name" id="func-profile-name">—</h3>
+        <p class="profile-sub" id="func-profile-doc">CPF/RG: —</p>
+        <span class="profile-badge func-badge">Funcionário</span>
+      </div>
+
+      <div class="profile-menu">
+        <button class="profile-menu-item" onclick="openPopup('popup-change-pass')">
+          <span>🔒</span> Alterar senha
+          <span class="menu-arrow">›</span>
+        </button>
+        <button class="profile-menu-item danger" onclick="doLogout()">
+          <span>🚪</span> Sair da conta
+          <span class="menu-arrow">›</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" id="nav-func">
+    <button class="nav-btn active" data-tab="inicio" onclick="switchTab('func','inicio')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </button>
+    <button class="nav-btn" data-tab="fila" onclick="switchTab('func','fila')">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">Fila</span>
+    </button>
+    <button class="nav-btn" data-tab="perfil" onclick="switchTab('func','perfil')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </button>
+  </nav>
+</div>
+
+<div class="popup-overlay hidden" id="popup-about" onclick="closePopupOutside(event, 'popup-about')">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup('popup-about')">✕</button>
+    <div class="popup-icon-big">😸</div>
+    <h3 class="popup-title">Sobre a Equipe</h3>
+    <p class="popup-body">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    </p>
+    <p class="popup-body">
+      Desenvolvido por alunos, para alunos.
+    </p>
+    <button class="btn-primary" onclick="closePopup('popup-about')">Fechar</button>
+  </div>
+</div>
+
+<div class="popup-overlay hidden" id="popup-change-pass" onclick="closePopupOutside(event, 'popup-change-pass')">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup('popup-change-pass')">✕</button>
+    <div class="popup-icon-big">🔒</div>
+    <h3 class="popup-title">Alterar Senha</h3>
+    <div class="form-group">
+      <label class="form-label">Nova senha</label>
+      <input type="password" id="new-pass" class="form-input" placeholder="••••••••" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirmar nova senha</label>
+      <input type="password" id="confirm-pass" class="form-input" placeholder="••••••••" />
+    </div>
+    <p class="form-error hidden" id="pass-error"></p>
+    <button class="btn-primary" onclick="changePassword()">Salvar senha</button>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast">
+  <span class="toast-icon" id="toast-icon">✅</span>
+  <span class="toast-msg" id="toast-msg">Ação realizada!</span>
+</div>
+
+<div class="popup-overlay hidden" id="popup-sua-vez" onclick="closePopupOutside(event, 'popup-sua-vez')">
+  <div class="popup-card popup-alert">
+    <div class="popup-icon-big pulse-anim">🔔</div>
+    <h3 class="popup-title">É a sua vez!</h3>
+    <p class="popup-body">Seu número foi chamado! Dirija-se ao balcão agora.</p>
+    <div class="call-number-display big-call" id="popup-sua-vez-num">—</div>
+    <button class="btn-primary" onclick="closePopup('popup-sua-vez')">Entendi!</button>
+  </div>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
