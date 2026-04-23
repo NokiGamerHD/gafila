@@ -1,14 +1,3 @@
-/**
- * ══════════════════════════════════════════════════════════
- *  GAFILA — script.js
- *  Sistema de Filas para Cantina Escolar
- *
- *  Firebase SDK v9+ (modular) — imports diretos no topo.
- *  Este arquivo é carregado como <script type="module">,
- *  portanto os imports ESM funcionam nativamente no browser.
- * ══════════════════════════════════════════════════════════
- */
-
 /* ══════════════════════════════════════════════════════════
    IMPORTS — Firebase App
 ══════════════════════════════════════════════════════════ */
@@ -40,7 +29,6 @@ import {
 
 /* ══════════════════════════════════════════════════════════
    FIREBASE CONFIG
-   🔧 Substitua com suas credenciais do Firebase Console
 ══════════════════════════════════════════════════════════ */
 const firebaseConfig = {
   apiKey: "AIzaSyDUSDpICxBNNCd4-tgTBCAj6TcYTX4fljI",
@@ -54,9 +42,6 @@ const firebaseConfig = {
 
 /* ══════════════════════════════════════════════════════════
    INICIALIZAÇÃO DO FIREBASE
-   Feita aqui no topo do módulo — antes de qualquer uso.
-   Se as credenciais forem inválidas / rede offline, o
-   bloco try/catch ativa o DEMO_MODE automaticamente.
 ══════════════════════════════════════════════════════════ */
 let app  = null;
 let auth = null;
@@ -74,25 +59,23 @@ try {
    ESTADO GLOBAL
 ══════════════════════════════════════════════════════════ */
 let STATE = {
-  userType:      null,   // 'aluno' | 'funcionario' | 'guest'
+  userType:      null,   
   userUID:       null,
-  userData:      {},     // { nome, rm }  ou  { nome, cpf }
-  meuNumero:     null,   // senha na fila (string "01", "02"...)
-  meuTipo:       null,   // 'principal' | 'repeticao'
-  foiAtendido:   false,  // true após ter sido chamado
-  filaPrincipal: [],     // [{ uid, numero, nome, tipo }]
+  userData:      {},    
+  meuNumero:     null,  
+  meuTipo:       null,
+  foiAtendido:   false,
+  filaPrincipal: [],
   filaRepeticao: [],
-  numeroAtual:   1,      // próxima senha a ser gerada
+  numeroAtual:   1,
   atendidos:     0,
-  unsubFila:     null,   // função de unsubscribe do onSnapshot
+  unsubFila:     null,
 };
 
 /* ══════════════════════════════════════════════════════════
    MODO DEMONSTRAÇÃO
-   Ativado automaticamente quando o Firebase falha.
-   Simula o Firestore localmente, sem rede.
 ══════════════════════════════════════════════════════════ */
-let DEMO_MODE = !app; // já ativa se initializeApp falhou acima
+let DEMO_MODE = !app;
 
 let DEMO_DB = {
   filaPrincipal: [],
@@ -109,7 +92,6 @@ function enableDemoMode() {
   console.info("GaFila: Modo demonstração ativo (sem Firebase).");
 }
 
-/** Simula onSnapshot: chama callback imediatamente e a cada demoNotify() */
 function demoSubscribe(callback) {
   callback({ ...DEMO_DB });
   _demoListeners.push(callback);
@@ -122,9 +104,6 @@ function demoNotify() {
 
 /* ══════════════════════════════════════════════════════════
    BOOTSTRAP
-   type="module" garante defer automático — o DOM já está
-   parseado quando este código executa. Usamos
-   DOMContentLoaded por clareza e segurança extra.
 ══════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", () => {
   if (!app) enableDemoMode();
@@ -173,8 +152,8 @@ function switchTab(userType, tab) {
    LOGIN — FORMULÁRIOS
 ══════════════════════════════════════════════════════════ */
 
-let _loginMode = "login";       // 'login' | 'register'
-let _loginType = "aluno";       // 'aluno' | 'funcionario'
+let _loginMode = "login";
+let _loginType = "aluno";
 
 function showMainLogin() {
   hide("login-card-aluno");
@@ -202,7 +181,6 @@ function showLoginForm(type, mode) {
   }
 }
 
-/* ── Submit Aluno ──────────────────────────────────────── */
 async function submitAluno() {
   const nome  = document.getElementById("aluno-nome").value.trim();
   const rm    = document.getElementById("aluno-rm").value.trim();
@@ -214,7 +192,6 @@ async function submitAluno() {
   if (!nome || !rm || !senha) return showError(errEl, "Preencha todos os campos.");
   if (senha.length < 6)       return showError(errEl, "Senha deve ter ao menos 6 caracteres.");
 
-  // Firebase Auth exige e-mail; criamos um fictício baseado no RM
   const email = `aluno-${rm.replace(/\s/g, "")}@gafila.app`;
 
   setLoading("btn-aluno-submit", true);
@@ -234,10 +211,8 @@ async function registrarAluno(email, senha, nome, rm) {
     return entrarComoAluno();
   }
 
-  // v9 modular: createUserWithEmailAndPassword(auth, email, senha)
   const cred = await createUserWithEmailAndPassword(auth, email, senha);
 
-  // v9 modular: setDoc(doc(db, colecao, id), dados)
   await setDoc(doc(db, "usuarios", cred.user.uid), {
     tipo: "aluno", nome, rm,
     criadoEm: new Date().toISOString(),
@@ -257,10 +232,8 @@ async function loginAluno(email, senha, nome, rm) {
     return entrarComoAluno();
   }
 
-  // v9 modular: signInWithEmailAndPassword(auth, email, senha)
   const cred = await signInWithEmailAndPassword(auth, email, senha);
 
-  // v9 modular: getDoc(doc(db, colecao, id))
   const snap = await getDoc(doc(db, "usuarios", cred.user.uid));
   const data = snap.exists() ? snap.data() : { nome, rm };
 
@@ -268,7 +241,6 @@ async function loginAluno(email, senha, nome, rm) {
   entrarComoAluno();
 }
 
-/* ── Submit Funcionário ────────────────────────────────── */
 async function submitFunc() {
   const nome  = document.getElementById("func-nome").value.trim();
   const cpf   = document.getElementById("func-doc").value.trim();
@@ -327,7 +299,6 @@ async function loginFunc(email, senha, nome, cpf) {
   entrarComoFunc();
 }
 
-/* ── Login Anônimo ─────────────────────────────────────── */
 async function loginAnonymous() {
   if (DEMO_MODE) {
     Object.assign(STATE, {
@@ -348,7 +319,6 @@ async function loginAnonymous() {
     });
     entrarComoAluno();
   } catch (e) {
-    // Auth anônimo pode estar desabilitado; fallback para demo
     enableDemoMode();
     Object.assign(STATE, {
       userType: "guest",
@@ -359,7 +329,6 @@ async function loginAnonymous() {
   }
 }
 
-/* ── Logout ────────────────────────────────────────────── */
 async function doLogout() {
   if (STATE.meuNumero !== null) await sairDaFila();
 
@@ -368,7 +337,6 @@ async function doLogout() {
     STATE.unsubFila = null;
   }
 
-  // v9 modular: signOut(auth)
   if (!DEMO_MODE && auth) {
     try { await signOut(auth); } catch (_) {}
   }
@@ -385,7 +353,6 @@ async function doLogout() {
   showToast("Você saiu da conta 👋", "👋");
 }
 
-/* ── Alterar Senha ──────────────────────────────────────── */
 async function changePassword() {
   const newPass     = document.getElementById("new-pass").value;
   const confirmPass = document.getElementById("confirm-pass").value;
@@ -402,7 +369,6 @@ async function changePassword() {
   }
 
   try {
-    // v9 modular: updatePassword(user, newPassword) — importado no topo
     await updatePassword(auth.currentUser, newPass);
     closePopup("popup-change-pass");
     showToast("Senha alterada com sucesso! 🔒", "✅");
@@ -508,7 +474,6 @@ function onFilaUpdate(dados) {
   STATE.numeroAtual   = dados.numeroAtual   || 1;
   STATE.atendidos     = dados.atendidos     || 0;
 
-  // Verifica se o número chamado agora é o do usuário logado
   if (dados.chamandoAgora && STATE.meuNumero !== null) {
     if (dados.chamandoAgora === STATE.meuNumero) {
       STATE.foiAtendido = true;
@@ -572,7 +537,6 @@ async function entrarFila(tipo) {
   }
 }
 
-/** Remove o usuário atual da fila */
 async function sairDaFila() {
   if (STATE.meuNumero === null) return;
 
@@ -600,10 +564,6 @@ async function sairDaFila() {
   } catch (e) { console.error(e); }
 }
 
-/**
- * Funcionário chama o próximo da fila.
- * Fila principal tem prioridade sobre a de repetição.
- */
 async function chamarProximo() {
   if (STATE.userType !== "funcionario") return;
 
@@ -647,16 +607,15 @@ function renderizarFila() {
   // Listas na aba do aluno
   renderFila(STATE.filaPrincipal, "ql-principal",  "ql-principal-empty",  false);
   renderFila(STATE.filaRepeticao, "ql-repeticao",  "ql-repeticao-empty",  false);
-  // Listas na aba do funcionário
   renderFila(STATE.filaPrincipal, "fql-principal", "fql-principal-empty", true);
   renderFila(STATE.filaRepeticao, "fql-repeticao", "fql-repeticao-empty", true);
 }
 
 /**
  * @param {Array}   fila
- * @param {string}  listId    ID do <div class="queue-list">
- * @param {string}  emptyId   ID da mensagem de fila vazia
- * @param {boolean} isFunc    true = visão do funcionário (sem destaque pessoal)
+ * @param {string}  listId
+ * @param {string}  emptyId
+ * @param {boolean} isFunc
  */
 function renderFila(fila, listId, emptyId, isFunc) {
   const listEl  = document.getElementById(listId);
@@ -702,14 +661,12 @@ function atualizarStatusFila() {
   const posEl    = document.getElementById("aluno-queue-pos");
   const curNumEl = document.getElementById("aluno-current-num");
 
-  // Próxima senha a ser chamada (topo da fila principal, depois repetição)
   const proxima = STATE.filaPrincipal[0]?.numero
                ?? STATE.filaRepeticao[0]?.numero
                ?? "—";
   if (curNumEl) curNumEl.textContent = proxima;
 
   if (STATE.foiAtendido && STATE.meuNumero === null) {
-    // Já foi atendido nesta sessão
     if (iconEl) iconEl.textContent = "✅";
     if (textEl) textEl.textContent = "Você já fez seu pedido!";
     hide("aluno-queue-badge");
@@ -718,7 +675,6 @@ function atualizarStatusFila() {
     show("btn-enter-repet");
 
   } else if (STATE.meuNumero !== null) {
-    // Está aguardando na fila
     const fila     = STATE.meuTipo === "principal" ? STATE.filaPrincipal : STATE.filaRepeticao;
     const posIndex = fila.findIndex(i => i.uid === STATE.userUID);
     const pos      = posIndex >= 0 ? posIndex + 1 : "—";
@@ -736,7 +692,6 @@ function atualizarStatusFila() {
     hide("btn-enter-repet");
 
   } else {
-    // Ainda não entrou na fila
     if (iconEl) iconEl.textContent = "🕐";
     if (textEl) textEl.textContent = "Entre na fila para iniciar a contagem";
     hide("aluno-queue-badge");
@@ -766,7 +721,7 @@ function atualizarPainelFunc(dados) {
     if (numEl)  numEl.textContent  = dados.chamandoAgora;
     if (typeEl) typeEl.textContent = STATE.filaPrincipal.length > 0 ? "Principal" : "Repetição";
   } else if (total > 0) {
-    // Há alunos na fila mas nenhum número chamado ainda
+ 
     show("func-call-empty");
     hide("func-call-active");
     const emptyEl = document.getElementById("func-call-empty");
@@ -775,7 +730,7 @@ function atualizarPainelFunc(dados) {
     if (p)    p.textContent    = "Chame o próximo!";
     if (icon) icon.textContent = "👆";
   } else {
-    // Fila totalmente vazia
+
     show("func-call-empty");
     hide("func-call-active");
     const emptyEl = document.getElementById("func-call-empty");
@@ -913,8 +868,6 @@ function traduzirErroFirebase(code) {
 
 /* ══════════════════════════════════════════════════════════
    EXPOSICAO GLOBAL
-   Módulos ES são isolados por padrão — funções chamadas via
-   onclick="..." no HTML precisam estar em window explicitamente.
 ══════════════════════════════════════════════════════════ */
 Object.assign(window, {
   showLoginForm,
