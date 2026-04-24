@@ -13,7 +13,7 @@ Alunos entram na fila pelo celular e são notificados quando é a vez deles.
 - Criação de contas por RM, CPF/RG;
 - Login como visitante.
 
-## Fluxo de uso
+## Fluxo de Uso
   Para o Aluno:
   Aluno acessa o site --> Registra-se/Faz login como aluno, ou entra como 
 visitante --> Pressiona "Entrar na Fila" --> Recebe um senha --> acompanha 
@@ -25,7 +25,14 @@ posição em tempo real --> Notificado quando é chamado --> Fila de repetição
 Vê o painel com "Fila Principal" e "Fila de Repetição" --> Pressiona 
 "Chamar próximo" para avançar a fila.
 
-## Colaboradores do projeto
+## Tecnologias Utilizadas
+- HTML5;
+- CSS3;
+- Vanilla JavaScript (sem frameworks);
+- Firebase;
+- Vercel.
+
+## Colaboradores do Projeto
 - Beatris Cecília de Sousa - 3DES
 - Carlos Eduardo Santos Tenório - 1DES;
 - Denis Pereira Martucci - 1DES;
