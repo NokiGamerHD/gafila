@@ -1,8 +1,8 @@
 # GaFila - Sua vez, sem fila
-## Sistema de Web Gerenciamento de Filas
+## Sistema de Web Gerenciamento e Organização de Filas
 ## Projeto desenvolvido durante a Hackthon da Etec de Peruíbe, durante o ano de 2026.
   GaFila é um website mobile-first que susbtitui as filas físicas 
-desordenadas da cantina por um sistema digital de senhas em tempo real.
+desordenadas da merenda por um sistema digital de senhas em tempo real.
 Alunos entram na fila pelo celular e são notificados quando é a vez deles.
 
 ## Funcionalidades
